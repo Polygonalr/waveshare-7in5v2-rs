@@ -1,22 +1,24 @@
+pub mod epd;
 mod rpi_helper;
+
+use epd::types::{Action, EpdConfig};
+use log::info;
 use rpi_helper::RpiGpio;
 use rppal::gpio::Level;
 use std::thread::sleep;
 use std::time::Duration;
-use log::info;
 
-const EPD_WIDTH: usize = 800;
-const EPD_HEIGHT: usize = 480; 
 const DATA_BUFFER_SIZE: usize = 4096;
 
 pub struct Epd {
+    config: EpdConfig,
     rpi: RpiGpio,
 }
 
 impl Epd {
-    pub fn new() -> Self {
+    pub fn new(config: EpdConfig) -> Self {
         let rpi = RpiGpio::new();
-        let mut s = Self { rpi };
+        let mut s = Self { config, rpi };
         s.init();
         s
     }
@@ -24,40 +26,22 @@ impl Epd {
     pub fn init(&mut self) {
         info!("Initializing display!");
         self.reset();
-
-        // btst
-        self.send_command(0x06);
-        self.send_data(&[0x17, 0x17, 0x28, 0x17]);
-        
-        // power setting
-        self.send_command(0x01);
-        self.send_data(&[0x07, 0x07, 0x3f, 0x3f]);
-
-        // power on
-        self.send_command(0x04);
-        sleep(Duration::from_millis(100));
-
-        self.read_busy();
-
-        // panel setting
-        self.send_command(0x00);
-        self.send_data(&[0x1F]);
-
-        // tres
-        self.send_command(0x61);
-        self.send_data(&[0x03, 0x20, 0x01, 0xE0]);
-
-        // soft start
-        self.send_command(0x15);
-        self.send_data(&[0x00]);
-
-        // vcom and data interval setting
-        self.send_command(0x50);
-        self.send_data(&[0x10, 0x07]);
-
-        // TCON setting
-        self.send_command(0x60);
-        self.send_data(&[0x22]);
+        for &command in self.config.init_commands {
+            match command {
+                Action::SendCommand(command) => {
+                    self.send_command(command);
+                }
+                Action::SendData(data) => {
+                    self.send_data(data);
+                }
+                Action::ReadBusy => {
+                    self.read_busy();
+                }
+                Action::Delay(ms) => {
+                    sleep(Duration::from_millis(ms));
+                }
+            }
+        }
     }
 
     pub fn reset(&mut self) {
@@ -100,12 +84,35 @@ impl Epd {
     pub fn clear(&mut self) {
         info!("Clearing EPD");
         self.send_command(0x10);
-        self.send_data(&[0x00; EPD_HEIGHT * EPD_WIDTH / 8]);
+        let blank = vec![0x00; self.config.height * self.config.width / 8];
+        self.send_data(&blank);
         self.send_command(0x13);
-        self.send_data(&[0x00; EPD_HEIGHT * EPD_WIDTH / 8]);
+        self.send_data(&blank);
         self.send_command(0x12);
         sleep(Duration::from_millis(100));
         self.read_busy();
+    }
+
+    pub fn sleep(&mut self) {
+        info!("Sleeping EPD");
+        self.send_command(0x02);
+        self.read_busy();
+        self.send_command(0x07);
+        self.send_data(&[0xA5]);
+        sleep(Duration::from_millis(1500));
+    }
+}
+
+impl Drop for Epd {
+    fn drop(&mut self) {
+        self.sleep();
+    }
+}
+
+impl Default for Epd {
+    fn default() -> Self {
+        use epd::epd7in5_v2::EPD_CONFIG;
+        Self::new(EPD_CONFIG)
     }
 }
 
@@ -115,7 +122,8 @@ mod tests {
 
     #[test]
     fn clear_test() {
-        let mut epd = Epd::new();
+        use epd::epd7in5_v2::EPD_CONFIG;
+        let mut epd = Epd::new(EPD_CONFIG);
         epd.clear();
     }
 }

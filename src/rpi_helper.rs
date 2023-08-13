@@ -43,3 +43,11 @@ impl RpiGpio {
         }
     }
 }
+
+impl Drop for RpiGpio {
+    fn drop(&mut self) {
+        self.gpio.rst.set_low();
+        self.gpio.dc.set_low();
+        self.gpio.pwr.set_low();
+    }
+}
