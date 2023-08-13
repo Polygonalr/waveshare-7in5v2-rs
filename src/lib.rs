@@ -1,4 +1,5 @@
 pub mod epd;
+pub mod util;
 mod rpi_helper;
 
 use epd::types::{Action, EpdConfig};
@@ -44,6 +45,10 @@ impl Epd {
         }
     }
 
+    fn image_buffer_size(&self) -> usize {
+        self.config.height * self.config.width / 8
+    }
+
     pub fn reset(&mut self) {
         self.rpi.gpio.rst.set_high();
         sleep(Duration::from_millis(20));
@@ -84,10 +89,22 @@ impl Epd {
     pub fn clear(&mut self) {
         info!("Clearing EPD");
         self.send_command(0x10);
-        let blank = vec![0x00; self.config.height * self.config.width / 8];
+        let blank = vec![0x00; self.image_buffer_size()];
         self.send_data(&blank);
         self.send_command(0x13);
         self.send_data(&blank);
+        self.send_command(0x12);
+        sleep(Duration::from_millis(100));
+        self.read_busy();
+    }
+
+    pub fn display(&mut self, data: &[u8]) {
+        if data.len() != self.image_buffer_size() {
+            panic!("Data size does not match display size");
+        }
+        info!("Displaying image on EPD");
+        self.send_command(0x13);
+        self.send_data(data);
         self.send_command(0x12);
         sleep(Duration::from_millis(100));
         self.read_busy();

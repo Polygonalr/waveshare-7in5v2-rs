@@ -1,8 +1,8 @@
 #[derive(Debug, Clone)]
 pub struct EpdConfig {
     pub(crate) init_commands: &'static [Action],
-    pub(crate) width: usize,
-    pub(crate) height: usize,
+    pub width: usize,
+    pub height: usize,
 }
 
 #[derive(Debug, Clone, Copy)]
