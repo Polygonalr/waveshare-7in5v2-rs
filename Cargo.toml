@@ -1,5 +1,5 @@
 [package]
-name = "waveshare-7in5v2-rs"
+name = "waveshare-rpi"
 version = "0.1.0"
 edition = "2021"
 

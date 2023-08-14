@@ -1,6 +1,6 @@
 use std::env::args;
-use waveshare_7in5v2_rs::{epd::epd7in5_v2::EPD_CONFIG, Epd};
-use waveshare_7in5v2_rs::util::{ColorMode, image_to_epd};
+use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
+use waveshare_rpi::util::{ColorMode, image_to_epd};
 
 fn main() {
     let mut e = Epd::new(EPD_CONFIG);
