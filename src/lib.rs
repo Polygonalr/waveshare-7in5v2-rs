@@ -3,7 +3,6 @@ pub mod util;
 mod rpi_helper;
 
 use epd::types::{Action, EpdConfig};
-use log::info;
 use rpi_helper::RpiGpio;
 use rppal::gpio::Level;
 use std::thread::sleep;
@@ -25,7 +24,8 @@ impl Epd {
     }
 
     pub fn init(&mut self) {
-        info!("Initializing display!");
+        simple_logger::SimpleLogger::new().env().init().unwrap();
+        log::info!("Initializing display!");
         self.reset();
         for &command in self.config.init_commands {
             match command {
@@ -76,18 +76,18 @@ impl Epd {
     }
 
     pub fn read_busy(&mut self) {
-        info!("Waiting until EPD is no longer busy");
+        log::info!("Waiting until EPD is no longer busy");
         self.send_command(0x71);
         let mut busy = self.rpi.gpio.busy.read();
         while busy == Level::Low {
             sleep(Duration::from_millis(100));
             busy = self.rpi.gpio.busy.read();
         }
-        info!("EPD is no longer busy");
+        log::info!("EPD is no longer busy");
     }
 
     pub fn clear(&mut self) {
-        info!("Clearing EPD");
+        log::info!("Clearing EPD");
         self.send_command(0x10);
         let blank = vec![0x00; self.image_buffer_size()];
         self.send_data(&blank);
@@ -102,7 +102,7 @@ impl Epd {
         if data.len() != self.image_buffer_size() {
             panic!("Data size does not match display size");
         }
-        info!("Displaying image on EPD");
+        log::info!("Displaying image on EPD");
         self.send_command(0x13);
         self.send_data(data);
         self.send_command(0x12);
@@ -111,7 +111,7 @@ impl Epd {
     }
 
     pub fn sleep(&mut self) {
-        info!("Sleeping EPD");
+        log::info!("Sleeping EPD");
         self.send_command(0x02);
         self.read_busy();
         self.send_command(0x07);
