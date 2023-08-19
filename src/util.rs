@@ -1,11 +1,21 @@
 use image::{self, imageops::*, GenericImage, Luma, ImageBuffer};
+use ril::{ BitPixel, Draw, Font, Image, TextSegment };
 
 pub enum ColorMode {
     BlackWhite,
     BlackWhiteRed,
 }
 
-// Only supports BlackWhite for now, will add BlackWhiteRed later?
+/**
+ * TODO
+ * 
+ * Add more options such as:
+ * - Cropping (whether to crop or center-and-pad)
+ * - Rotation (whether to disable the automatic rotation, or allow user to specify rotation)
+ * 
+ * Add support for ColorMode::BlackWhiteRed
+ * Reimplement with ril to support interoperability with text_to_epd
+ */
 pub fn image_to_epd(filepath: &str, _color_mode: ColorMode, epd_width: usize, epd_height: usize) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     if epd_width < epd_height {
         panic!("epd_width must be less than or equal to epd_height");
@@ -22,7 +32,6 @@ pub fn image_to_epd(filepath: &str, _color_mode: ColorMode, epd_width: usize, ep
     let mut new_canvas: ImageBuffer<Luma<u8>, Vec<u8>> = ImageBuffer::new(epd_width as u32, epd_height as u32);
 
     // initialize canvas to white
-    // TODO add a toggle for default canvas color, and whether to crop-to-fit or center-and-pad
     for pixel in new_canvas.pixels_mut() {
         *pixel = Luma([255]); 
     }
@@ -45,5 +54,35 @@ pub fn image_to_epd(filepath: &str, _color_mode: ColorMode, epd_width: usize, ep
     }
 
     assert!(data.len() == epd_height * epd_width / 8);
+    Ok(data)
+}
+
+/**
+ * TODO
+ * 
+ * Add more options such as:
+ * - Font file
+ * - Alignment/Centering
+ * - Support for ColorMode
+ * 
+ * Ensure the text will fit on the display (and add support for text wrapping)
+ */
+pub fn text_to_epd(text: &str, font_size: f32, width: usize, height: usize) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    let default_font_file = include_bytes!("fonts/Roboto-Regular.ttf") as &[u8];
+    let font = Font::from_bytes(default_font_file, font_size).unwrap();
+    let mut image = Image::new(width as u32, height as u32, BitPixel::new(true));
+    TextSegment::new(&font, text, BitPixel::new(false))
+        .with_position(0, 0)
+        .draw(&mut image);
+
+    image.save(ril::ImageFormat::Jpeg, "test.jpg").unwrap();
+    let mut data = vec![0; image.data.len() / 8];
+    for (i, byte) in data.iter_mut().enumerate() {
+        for bit in 0..8 {
+            if !image.data[i * 8 + bit].value() {
+                *byte |= 1 << (7 - bit);
+            }
+        }
+    }
     Ok(data)
 }

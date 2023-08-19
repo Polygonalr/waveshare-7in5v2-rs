@@ -53,10 +53,19 @@ cargo build --release --target aarch64-unknown-linux-musl
 
 The compiled program can be found at `target/aarch64-unknown-linux-musl/release` and can be transferred over to a Raspberry Pi to be executed.
 
-Usage of the program to display an image:
+Usage of the program:
 
 ```
-waveshare-rpi [IMAGE_FILENAME]
+./waveshare-rpi --help
+Program to update a Waveshare 7.5" e-ink display
+
+Usage: waveshare-rpi [OPTIONS]
+
+Options:
+  -i, --image <IMAGE>  Path of the image to display
+  -t, --text <TEXT>    Text to display
+  -c, --clear          Clear the display
+  -h, --help           Print help
+  -V, --version        Print version
 ```
 
-Leaving the filename field out will clear the screen by default.
