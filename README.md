@@ -31,10 +31,11 @@ For testing purposes, this project has a `main.rs` file which can be modified an
 
 Directly compiling for Raspberry Pi OS `bullseye` (which is the latest version of Raspberry Pi OS as of writing this) is currently not supported due to the version of the `libc` linker on the Ubuntu machine being too new - `bullseye` by default does not have the newer `libc` versions. Therefore, it is a requirement to compile for the target `aarch64-unknown-linux-musl` to use static linking. However, using `gcc` may still give some problems, so `clang` is used instead.
 
-* Install the required tools with the following command. 
+* Install the required tools with the following commands. 
 
 ```
-sudo apt-get install musl-tools clang llvm -y
+sudo apt-get install musl-tools clang llvm libncurses5 -y
+rustup target add aarch64-unknown-linux-musl
 ```
 
 * To tell `cargo` to use `clang` as the linker, export the following environment values.
