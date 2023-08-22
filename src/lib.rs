@@ -1,6 +1,6 @@
 pub mod epd;
-pub mod util;
 mod rpi_helper;
+pub mod util;
 
 use epd::types::{Action, EpdConfig};
 use rpi_helper::RpiGpio;

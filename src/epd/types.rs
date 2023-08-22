@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct EpdConfig {
     pub(crate) init_commands: &'static [Action],
     pub width: usize,

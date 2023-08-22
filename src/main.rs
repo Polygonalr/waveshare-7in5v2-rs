@@ -1,6 +1,6 @@
 use clap::Parser;
+use waveshare_rpi::util::{image_to_epd, text_to_epd, EpdImageOptions};
 use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
-use waveshare_rpi::util::{ColorMode, image_to_epd, text_to_epd};
 
 /// Program to update a Waveshare 7.5" e-ink display
 #[derive(Parser, Debug)]
@@ -22,33 +22,29 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    match args.image {
-        Some(filepath) => {
-            let data = image_to_epd(&filepath, ColorMode::BlackWhite, EPD_CONFIG.width, EPD_CONFIG.height).unwrap();
-            let mut epd = Epd::new(EPD_CONFIG);
-            epd.display(&data);
-            return;
-        },
-        None => ()
+    if let Some(filepath) = args.image {
+        let image_options = EpdImageOptions {
+            epd_width: EPD_CONFIG.width,
+            epd_height: EPD_CONFIG.height,
+            ..Default::default()
+        };
+        let data = image_to_epd(&filepath, image_options).unwrap();
+        let mut epd = Epd::new(EPD_CONFIG);
+        epd.display(&data);
+        return;
     }
 
-    match args.text {
-        Some(text) => {
-            let data = text_to_epd(&text, 24.0, EPD_CONFIG.width, EPD_CONFIG.height).unwrap();
-            let mut epd = Epd::new(EPD_CONFIG);
-            epd.display(&data);
-            return;
-        },
-        None => ()
+    if let Some(text) = args.text {
+        let data = text_to_epd(&text, 24.0, EPD_CONFIG.width, EPD_CONFIG.height).unwrap();
+        let mut epd = Epd::new(EPD_CONFIG);
+        epd.display(&data);
+        return;
     }
 
-    match args.clear {
-        true => {
-            let mut epd = Epd::new(EPD_CONFIG);
-            epd.clear();
-            return;
-        },
-        false => ()
+    if args.clear {
+        let mut epd = Epd::new(EPD_CONFIG);
+        epd.clear();
+        return;
     }
 
     println!("No image or text specified. Use --help for usage information.");
