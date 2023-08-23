@@ -7,6 +7,14 @@
 * 7.5inch E-Paper Display V2
 * *More to come?*
 
+## Installation (cutting-edge)
+
+To use this crate with your project:
+
+```bash
+cargo add --git https://github.com/Polygonalr/waveshare-rpi.git
+```
+
 ## Example library usage
 
 ```rust
@@ -40,14 +48,14 @@ Directly compiling for Raspberry Pi OS `bullseye` (which is the latest version o
 
 * Install the required tools with the following commands. 
 
-```
+```bash
 sudo apt-get install musl-tools clang llvm libncurses5 -y
 rustup target add aarch64-unknown-linux-musl
 ```
 
 * To tell `cargo` to use `clang` as the linker, export the following environment values.
 
-```
+```bash
 export CC_aarch64_unknown_linux_musl=clang
 export AR_aarch64_unknown_linux_musl=llvm-ar
 export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
@@ -55,7 +63,7 @@ export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=
 
 * Finally, compile the project with the following command.
 
-```
+```bash
 cargo build --release --target aarch64-unknown-linux-musl
 ```
 
@@ -63,7 +71,7 @@ The compiled program can be found at `target/aarch64-unknown-linux-musl/release`
 
 Usage of the program:
 
-```
+```bash
 ./waveshare-rpi --help
 Program to update a Waveshare 7.5" e-ink display
 
