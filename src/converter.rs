@@ -42,20 +42,24 @@ pub enum RotationMode {
 ///
 /// # Examples
 ///
+/// **Using `EpdImageOptions::new()`:**
+///
 /// ```
 /// use waveshare_rpi::epd::epd7in5_v2::EPD_CONFIG;
-/// use waveshare_rpi::util::{EpdImageOptions, CropMode, RotationMode};
+/// use waveshare_rpi::converter::{EpdImageOptions, CropMode, RotationMode};
+///
 /// let mut options = EpdImageOptions::new();
 /// options.crop_mode = CropMode::CropToFit;
 /// options.rotation_mode = RotationMode::ForceLandscape;
 /// options.load_epd_config(EPD_CONFIG);
 /// ```
 ///
-/// or
+/// **Using `Default::default()`:**
 ///
 /// ```
 /// use waveshare_rpi::epd::epd7in5_v2::EPD_CONFIG;
-/// use waveshare_rpi::util::{EpdImageOptions, CropMode, RotationMode};
+/// use waveshare_rpi::converter::{EpdImageOptions, CropMode, RotationMode};
+///
 /// let mut options = EpdImageOptions {
 ///   crop_mode: CropMode::CropToFit,
 ///   rotation_mode: RotationMode::ForceLandscape,
@@ -128,28 +132,28 @@ fn crop_to_fit(options: &EpdImageOptions, img: DynamicImage) -> ImageBuffer<Luma
     img
 }
 
-/**
- * TODO
- *
- * Add support for ColorMode::BlackWhiteRed
- * Reimplement with ril to support interoperability with text_to_epd
- */
 /// Convert an image to EPD format to be displayed on the e-paper display.
 ///
 /// # Arguments
 ///
 /// * `filepath` - The path to the image file.
-/// * `options` - The options for converting the image.
+/// * `options` - The options for converting the image of type `EpdImageOptions`.
 ///
 /// # Examples
 ///
 /// ```no_run
 /// use waveshare_rpi::epd::epd7in5_v2::EPD_CONFIG;
-/// use waveshare_rpi::util::{EpdImageOptions, CropMode, RotationMode};
+/// use waveshare_rpi::converter::{EpdImageOptions, CropMode, RotationMode};
+///
 /// let mut options = EpdImageOptions::new();
 /// options.load_epd_config(EPD_CONFIG);
-/// let data = waveshare_rpi::util::image_to_epd("test.jpg", options).unwrap();
+/// let data = waveshare_rpi::converter::image_to_epd("test.jpg", options).unwrap();
 /// ```
+///
+/// # To-dos
+///
+/// * Add support for `ColorMode::BlackWhiteRed`.
+/// * Reimplement with ril to support interoperability with `text_to_epd`.
 pub fn image_to_epd(
     filepath: &str,
     options: EpdImageOptions,
@@ -187,17 +191,19 @@ pub fn image_to_epd(
     Ok(data)
 }
 
-/**
- * TODO
- *
- * Add more options such as:
- * - Font file
- * - Alignment/Centering
- * - Support for ColorMode
- *
- * Ensure the text will fit on the display (and add support for text wrapping)
- */
 /// Convert text to EPD format to be displayed on the e-paper display.
+///
+/// # Arguments
+///
+/// # Examples
+///
+/// # To-dos
+///
+/// - Add more options such as:
+///   - Font file
+///   - Alignment/Centering
+///   - Support for ColorMode
+/// - Ensure the text will fit on the display (and add support for text wrapping)
 pub fn text_to_epd(
     text: &str,
     font_size: f32,

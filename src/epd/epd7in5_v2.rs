@@ -1,4 +1,4 @@
-use crate::epd::types::{Action, EpdConfig};
+use crate::epd::{Action, EpdConfig};
 
 pub const EPD_CONFIG: EpdConfig = EpdConfig {
     init_commands: &[

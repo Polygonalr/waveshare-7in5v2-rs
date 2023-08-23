@@ -11,13 +11,20 @@
 
 ```rust
 use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
-use waveshare_rpi::util::{ColorMode, image_to_epd};
+use waveshare_rpi::converter::{ColorMode, image_to_epd};
 
 // Initialize the interface to interact with the epd7in5_v2 display
 let mut my_epd = Epd::new(EPD_CONFIG);
 
+// Initialize the options to be used for converting an image to the epd format
+let image_options = EpdImageOptions {
+    epd_width: EPD_CONFIG.width,
+    epd_height: EPD_CONFIG.height,
+    ..Default::default()
+};
+
 // Resizes and converts image.png into the format compatible with the epd7in5_v2 display
-let img_data = image_to_epd("image.png", ColorMode::BlackWhite, EPD_CONFIG.width, EPD_CONFIG.height).unwrap();
+let img_data = image_to_epd("image.png", image_options).unwrap();
 
 // Transfer the image data to the display for displaying
 my_epd.display(&img_data);

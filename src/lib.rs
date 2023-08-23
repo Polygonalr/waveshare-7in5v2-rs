@@ -1,8 +1,7 @@
 pub mod epd;
 mod rpi_helper;
-pub mod util;
 
-use epd::types::{Action, EpdConfig};
+use epd::{Action, EpdConfig};
 use rpi_helper::RpiGpio;
 use rppal::gpio::Level;
 use std::thread::sleep;

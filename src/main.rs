@@ -1,5 +1,5 @@
 use clap::Parser;
-use waveshare_rpi::util::{image_to_epd, text_to_epd, EpdImageOptions};
+use waveshare_rpi::converter::{image_to_epd, text_to_epd, EpdImageOptions};
 use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
 
 /// Program to update a Waveshare 7.5" e-ink display
@@ -23,11 +23,8 @@ fn main() {
     let args = Args::parse();
 
     if let Some(filepath) = args.image {
-        let image_options = EpdImageOptions {
-            epd_width: EPD_CONFIG.width,
-            epd_height: EPD_CONFIG.height,
-            ..Default::default()
-        };
+        let mut image_options = EpdImageOptions::new();
+        image_options.load_epd_config(EPD_CONFIG);
         let data = image_to_epd(&filepath, image_options).unwrap();
         let mut epd = Epd::new(EPD_CONFIG);
         epd.display(&data);
