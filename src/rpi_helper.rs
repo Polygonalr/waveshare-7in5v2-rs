@@ -2,13 +2,13 @@ use rppal::gpio::{Gpio, InputPin, OutputPin};
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
 // RPi constants
-pub const RST_PIN: u8 = 17;
-pub const DC_PIN: u8 = 25;
-pub const CS_PIN: u8 = 8;
-pub const BUSY_PIN: u8 = 24;
-pub const PWR_PIN: u8 = 18;
+pub(crate) const RST_PIN: u8 = 17;
+pub(crate) const DC_PIN: u8 = 25;
+pub(crate) const CS_PIN: u8 = 8;
+pub(crate) const BUSY_PIN: u8 = 24;
+pub(crate) const PWR_PIN: u8 = 18;
 
-pub struct RpiGpioPins {
+pub(crate) struct RpiGpioPins {
     pub rst: OutputPin,
     pub dc: OutputPin,
     pub cs: OutputPin,
@@ -16,13 +16,13 @@ pub struct RpiGpioPins {
     pub pwr: OutputPin,
 }
 
-pub struct RpiGpio {
+pub(crate) struct RpiGpio {
     pub gpio: RpiGpioPins,
     pub spi: Spi,
 }
 
 impl RpiGpio {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         let gpio = Gpio::new().unwrap();
         let spi = Spi::new(Bus::Spi0, SlaveSelect::Ss0, 4_000_000, Mode::Mode0).unwrap();
         let mut pwr = gpio.get(PWR_PIN).unwrap().into_output();
