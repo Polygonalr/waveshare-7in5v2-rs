@@ -1,3 +1,35 @@
+/*!
+This crate provides a high-level interface to the Waveshare e-paper displays. It is based on
+Waveshare's C library for the Raspberry Pi[^1] with some modifications to make it more idiomatic.
+`waveshare-rpi` also provides a `converter` to convert images and text to the format for use
+with the e-paper displays.
+
+# Example
+
+Usage with the 7.5" V2 display:
+
+```no_run
+use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
+use waveshare_rpi::converter::{ColorMode, EpdImageOptions, image_to_epd};
+
+// Initialize the interface to interact with the epd7in5_v2 display
+let mut my_epd = Epd::new(EPD_CONFIG);
+
+// Initialize the image options for the image to be displayed on the display
+let mut image_options = EpdImageOptions::new();
+image_options.load_epd_config(EPD_CONFIG);
+
+// Resizes and converts image.png into the format compatible with the epd7in5_v2 display
+let img_data = image_to_epd("image.png", image_options).unwrap();
+
+// Transfer the image data to the display for displaying
+my_epd.display(&img_data);
+```
+
+[^1]: [https://github.com/waveshareteam/e-Paper](https://github.com/waveshareteam/e-Paper)
+ */
+
+pub mod converter;
 pub mod epd;
 mod rpi_helper;
 
