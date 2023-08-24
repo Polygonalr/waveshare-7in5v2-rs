@@ -18,7 +18,7 @@ cargo add --git https://github.com/Polygonalr/waveshare-rpi.git
 ## Example library usage
 
 ```rust
-use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
+use waveshare_rpi::{epd_configs::epd7in5_v2::EPD_CONFIG, Epd};
 use waveshare_rpi::converter::{ColorMode, image_to_epd};
 
 // Initialize the interface to interact with the epd7in5_v2 display
@@ -35,7 +35,7 @@ let image_options = EpdImageOptions {
 let img_data = image_to_epd("image.png", image_options).unwrap();
 
 // Transfer the image data to the display for displaying
-my_epd.display(&img_data);
+my_epd.display(&img_data).unwrap();
 ```
 
 ## Compilation for testing

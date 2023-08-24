@@ -27,14 +27,14 @@ fn main() {
         image_options.load_epd_config(EPD_CONFIG);
         let data = image_to_epd(&filepath, image_options).unwrap();
         let mut epd = Epd::new(EPD_CONFIG);
-        epd.display(&data);
+        epd.display(&data).unwrap();
         return;
     }
 
     if let Some(text) = args.text {
         let data = text_to_epd(&text, 24.0, EPD_CONFIG.width, EPD_CONFIG.height).unwrap();
         let mut epd = Epd::new(EPD_CONFIG);
-        epd.display(&data);
+        epd.display(&data).unwrap();
         return;
     }
 

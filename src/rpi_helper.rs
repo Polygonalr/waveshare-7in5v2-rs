@@ -16,6 +16,7 @@ pub(crate) struct RpiGpioPins {
     pub pwr: OutputPin,
 }
 
+/// A struct that contains all the interfaces required to interact with an E-Paper Display
 pub(crate) struct RpiGpio {
     pub gpio: RpiGpioPins,
     pub spi: Spi,
@@ -44,6 +45,7 @@ impl RpiGpio {
     }
 }
 
+// Power down the EPD when dropping
 impl Drop for RpiGpio {
     fn drop(&mut self) {
         self.gpio.rst.set_low();

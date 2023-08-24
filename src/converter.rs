@@ -1,8 +1,9 @@
+//! Contains functions for converting images and text to EPD format.
 use crate::EpdConfig;
 use image::{self, imageops::*, DynamicImage, GenericImage, ImageBuffer, Luma};
 use ril::{BitPixel, Draw, Font, Image, TextSegment};
 
-/// Color mode for the converted image data.
+/// Color mode for the converted image data. Currently unutilized.
 #[derive(Default, PartialEq)]
 pub enum ColorMode {
     /// For displays which only displays black and white.
@@ -40,12 +41,22 @@ pub enum RotationMode {
 /// or declare the struct while setting the options you want to change and using the
 /// default values for the rest via the Default trait.
 ///
+/// # Available Options
+///
+/// | Option name | Type | Description | Default value |
+/// |---|---|---|---|
+/// | `crop_mode` | [`CropMode`] | Modes to pre-process the image to fit on the display. | [`Center`](CropMode::Center) |
+/// | `rotation_mode` | [`RotationMode`] | How to rotate the image before pre-processing. | [`Automatic`](RotationMode::Automatic) |
+/// | `color_mode` | [`ColorMode`] | Unutilized at the moment, sets the color mode of the display. | [`BlackWhite`](ColorMode::BlackWhite) |
+/// | `epd_width` | `usize` | Width of the EPD display measured in pixels. **Do not set this value explicitly!**. Use `load_epd_config` instead if you want to set this value. | 0 |
+/// | `epd_height` | `usize` | Height of the EPD display measured in pixels. **Do not set this value explicitly!**. Use `load_epd_config` instead if you want to set this value. | 0 |
+///
 /// # Examples
 ///
 /// **Using `EpdImageOptions::new()`:**
 ///
 /// ```
-/// use waveshare_rpi::epd::epd7in5_v2::EPD_CONFIG;
+/// use waveshare_rpi::epd_configs::epd7in5_v2::EPD_CONFIG;
 /// use waveshare_rpi::converter::{EpdImageOptions, CropMode, RotationMode};
 ///
 /// let mut options = EpdImageOptions::new();
@@ -57,7 +68,7 @@ pub enum RotationMode {
 /// **Using `Default::default()`:**
 ///
 /// ```
-/// use waveshare_rpi::epd::epd7in5_v2::EPD_CONFIG;
+/// use waveshare_rpi::epd_configs::epd7in5_v2::EPD_CONFIG;
 /// use waveshare_rpi::converter::{EpdImageOptions, CropMode, RotationMode};
 ///
 /// let mut options = EpdImageOptions {
@@ -132,17 +143,18 @@ fn crop_to_fit(options: &EpdImageOptions, img: DynamicImage) -> ImageBuffer<Luma
     img
 }
 
-/// Convert an image to EPD format to be displayed on the e-paper display.
+/// Convert an image to EPD format to be displayed on the e-paper display. Uses the
+/// [`image`] crate to resize, dither and optionally crop images.
 ///
 /// # Arguments
 ///
 /// * `filepath` - The path to the image file.
-/// * `options` - The options for converting the image of type `EpdImageOptions`.
+/// * `options` - The options for converting the image of type [`EpdImageOptions`]. See the struct's documentation for more details.
 ///
 /// # Examples
 ///
 /// ```no_run
-/// use waveshare_rpi::epd::epd7in5_v2::EPD_CONFIG;
+/// use waveshare_rpi::epd_configs::epd7in5_v2::EPD_CONFIG;
 /// use waveshare_rpi::converter::{EpdImageOptions, CropMode, RotationMode};
 ///
 /// let mut options = EpdImageOptions::new();
@@ -154,6 +166,7 @@ fn crop_to_fit(options: &EpdImageOptions, img: DynamicImage) -> ImageBuffer<Luma
 ///
 /// * Add support for `ColorMode::BlackWhiteRed`.
 /// * Reimplement with ril to support interoperability with `text_to_epd`.
+/// * Integrate this function into te Epd struct via a trait (toggleable with a feature).
 pub fn image_to_epd(
     filepath: &str,
     options: EpdImageOptions,
@@ -191,7 +204,8 @@ pub fn image_to_epd(
     Ok(data)
 }
 
-/// Convert text to EPD format to be displayed on the e-paper display.
+/// Convert text to EPD format to be displayed on the e-paper display. Uses the [`ril`]
+/// as the backend to render text.
 ///
 /// # Arguments
 ///
@@ -201,6 +215,7 @@ pub fn image_to_epd(
 ///
 /// - Add more options such as:
 ///   - Font file
+///   - Font size
 ///   - Alignment/Centering
 ///   - Support for ColorMode
 /// - Ensure the text will fit on the display (and add support for text wrapping)
