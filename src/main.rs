@@ -1,6 +1,6 @@
 use clap::Parser;
 use waveshare_rpi::converter::{image_to_epd, text_to_epd, EpdImageOptions};
-use waveshare_rpi::{epd::epd7in5_v2::EPD_CONFIG, Epd};
+use waveshare_rpi::{epd_configs::epd7in5_v2::EPD_CONFIG, Epd};
 
 /// Program to update a Waveshare 7.5" e-ink display
 #[derive(Parser, Debug)]

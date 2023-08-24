@@ -1,3 +1,4 @@
+//! Contains the configurations for different Waveshare e-ink display models.
 pub mod epd7in5_v2;
 
 /// Represents the configuration of a Waveshare e-ink display model.
