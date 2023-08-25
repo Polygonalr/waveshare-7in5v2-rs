@@ -1,11 +1,13 @@
 # waveshare-rpi
 
-*This module is currently under **heavy development** and is written for code porting practice. You should be using [epd-waveshare](https://lib.rs/crates/epd-waveshare) instead, which supports more embedded host devices and Waveshare displays.*
+*This module is currently under **heavy development** and is written for code porting practice. You should be using [epd-waveshare](https://docs.rs/epd-waveshare/latest/epd_waveshare/) instead, which supports more embedded host devices and Waveshare displays.*
 
 `waveshare-rpi` is a (unpublished) crate for Raspberry Pis to use Waveshare e-paper displays. Currently, it only supports the following displays, though more displays can be easily added.
 
-* 7.5inch E-Paper Display V2
-* *More to come?*
+* 2.9inch flexible display
+* 5.83inch V2 display
+* 7.5inch E-Paper V2 display 
+* *More to come? Open an issue on GitHub to request for it!*
 
 ## Installation (cutting-edge)
 

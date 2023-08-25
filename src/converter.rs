@@ -92,10 +92,27 @@ impl EpdImageOptions {
     pub fn new() -> EpdImageOptions {
         Default::default()
     }
+
     /// Update a new EpdImageOptions struct with the width and height of the display from its config.
     pub fn load_epd_config(&mut self, epd_config: EpdConfig) {
         self.epd_width = epd_config.width;
         self.epd_height = epd_config.height;
+    }
+
+    /// Returns true if the image needs to be rotated.
+    fn check_rotation(&self, img: &DynamicImage) -> bool {
+        match self.rotation_mode {
+            RotationMode::Automatic => {
+                (img.width() > img.height() && self.epd_width < self.epd_height)
+                    || (img.width() < img.height() && self.epd_width > self.epd_height)
+            }
+            RotationMode::ForcePortrait => {
+                img.width() > img.height() || self.epd_width < self.epd_height
+            }
+            RotationMode::ForceLandscape => {
+                img.width() < img.height() || self.epd_width > self.epd_height
+            }
+        }
     }
 }
 
@@ -171,16 +188,14 @@ pub fn image_to_epd(
     filepath: &str,
     options: EpdImageOptions,
 ) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    if options.epd_width < options.epd_height {
-        return Err("epd_width must be less than or equal to epd_height".into());
-    } else if options.epd_width == 0 || options.epd_height == 0 {
+    if options.epd_width == 0 || options.epd_height == 0 {
         return Err("epd_width and epd_height must be greater than 0".into());
     }
 
     let mut img = image::open(filepath)?;
-    if (options.rotation_mode == RotationMode::Automatic && img.width() < img.height())
-        || options.rotation_mode == RotationMode::ForcePortrait
-    {
+
+    // rotate image if necessary
+    if options.check_rotation(&img) {
         img = img.rotate90();
     }
 

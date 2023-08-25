@@ -4,10 +4,16 @@ Waveshare's C library for the Raspberry Pi[^1] with some modifications to make i
 `waveshare-rpi` also provides a [`converter`] module to convert images and text to the format for use
 with the e-paper displays.
 
+If you intend to use it with other devices, or are unable to find your display model in the list below, please
+consider using the [`epd-waveshare`](https://docs.rs/epd-waveshare/latest/epd_waveshare/) crate instead, or open
+a GitHub issue to request support for your display model.
+
 # Supported Waveshare E-Paper Display Models
 
 | Model | Tested |
 |---|---|
+| [Waveshare 2.9inch flexible display](https://www.waveshare.com/2.9inch-e-paper-hat-d.htm) | No |
+| [Waveshare 5.83inch V2 display](https://www.waveshare.com/5.83inch-e-Paper-HAT.htm) | No |
 | [Waveshare 7.5inch V2 display](https://www.waveshare.com/7.5inch-e-Paper-HAT.htm) | Yes |
 
 # Example

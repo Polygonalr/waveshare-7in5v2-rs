@@ -2,6 +2,8 @@
 pub mod epd7in5_v2;
 
 /// Represents the configuration of a Waveshare e-ink display model.
+/// 
+/// Todo: Add partial refresh and more available color modes.
 #[derive(Debug, Default, Clone)]
 pub struct EpdConfig {
     pub(crate) init_commands: &'static [Action],
