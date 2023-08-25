@@ -232,7 +232,6 @@ pub fn text_to_epd(
         .with_position(0, 0)
         .draw(&mut image);
 
-    image.save(ril::ImageFormat::Jpeg, "test.jpg").unwrap();
     let mut data = vec![0; image.data.len() / 8];
     for (i, byte) in data.iter_mut().enumerate() {
         for bit in 0..8 {
