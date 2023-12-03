@@ -55,15 +55,7 @@ sudo apt-get install musl-tools clang llvm libncurses5 -y
 rustup target add aarch64-unknown-linux-musl
 ```
 
-* To tell `cargo` to use `clang` as the linker, export the following environment values.
-
-```bash
-export CC_aarch64_unknown_linux_musl=clang
-export AR_aarch64_unknown_linux_musl=llvm-ar
-export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
-```
-
-* Finally, compile the project with the following command.
+* Compile the project with the following command.
 
 ```bash
 cargo build --release --target aarch64-unknown-linux-musl
